@@ -6,14 +6,22 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
+import org.asynchttpclient.AsyncCompletionHandler;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
+import org.asynchttpclient.ListenableFuture;
 import org.asynchttpclient.Realm;
+import org.asynchttpclient.Request;
+import org.asynchttpclient.RequestBuilder;
+import org.asynchttpclient.Response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
@@ -71,21 +79,6 @@ public class Zendesk implements Closeable {
         this.headers = Collections.unmodifiableMap(headers);
 
         this.mapper = createMapper();
-    }
-	
-    public boolean isClosed() {
-        return closed || client.isClosed();
-    }
-
-    public void close() {
-        if (closeClient && !client.isClosed()) {
-            try {
-                client.close();
-            } catch (IOException e) {
-                logger.warn("Unexpected error on client close", e);
-            }
-        }
-        closed = true;
     }
     
     public static ObjectMapper createMapper() {
@@ -173,5 +166,157 @@ public class Zendesk implements Closeable {
             return new Zendesk(client, url, username, password, headers);
         }
     }
+	
+    public boolean isClosed() {
+        return closed || client.isClosed();
+    }
 
+    public void close() {
+        if (closeClient && !client.isClosed()) {
+            try {
+                client.close();
+            } catch (IOException e) {
+                logger.warn("Unexpected error on client close", e);
+            }
+        }
+        closed = true;
+    }
+
+    private void logResponse(Response response) throws IOException {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Response HTTP/{} {}\n{}", response.getStatusCode(), response.getStatusText(),
+                    response.getResponseBody());
+        }
+        if (logger.isTraceEnabled()) {
+            logger.debug("Response headers {}", response.getHeaders());
+        }
+    }
+
+    private TemplateUri tmpl(String template) {
+        return new TemplateUri(url + template);
+    }
+
+    private Uri cnst(String template) {
+        return new FixedUri(url + template);
+    }
+
+    private Request req(String method, Uri template) {
+        return req(method, template.toString());
+    }
+
+    private byte[] json(Object object) {
+        try {
+            return mapper.writeValueAsBytes(object);
+        } catch (JsonProcessingException e) {
+            throw new ZendeskException(e.getMessage(), e);
+        }
+    }
+
+    private <T> ListenableFuture<T> submit(Request request, ZendeskAsyncCompletionHandler<T> handler) {
+        if (logger.isDebugEnabled()) {
+            if (request.getStringData() != null) {
+                logger.debug("Request {} {}\n{}", request.getMethod(), request.getUrl(), request.getStringData());
+            } else if (request.getByteData() != null) {
+                logger.debug("Request {} {} {} {} bytes", request.getMethod(), request.getUrl(),
+                        request.getHeaders().get("Content-type"), request.getByteData().length);
+            } else {
+                logger.debug("Request {} {}", request.getMethod(), request.getUrl());
+            }
+        }
+        return client.executeRequest(request, handler);
+    }
+    
+    private static <T> T complete(ListenableFuture<T> future) {
+        try {
+            return future.get();
+        } catch (InterruptedException e) {
+            throw new ZendeskException(e.getMessage(), e);
+        } catch (ExecutionException e) {
+            if (e.getCause() instanceof ZendeskException) {
+                if (e.getCause() instanceof ZendeskResponseRateLimitException) {
+                    throw new ZendeskResponseRateLimitException((ZendeskResponseRateLimitException) e.getCause());
+                }
+                if (e.getCause() instanceof ZendeskResponseException) {
+                    throw new ZendeskResponseException((ZendeskResponseException)e.getCause());
+                }
+                throw new ZendeskException(e.getCause());
+            }
+            throw new ZendeskException(e.getMessage(), e);
+        }
+    }
+
+    private static abstract class ZendeskAsyncCompletionHandler<T> extends AsyncCompletionHandler<T> {
+        @Override
+        public void onThrowable(Throwable t) {
+            if (t instanceof IOException) {
+                throw new ZendeskException(t);
+            } else {
+                super.onThrowable(t);
+            }
+        }
+    }
+    
+    private Request req(String method, String url) {
+        return reqBuilder(method, url).build();
+    }
+
+    private Request req(String method, Uri template, String contentType, byte[] body) {
+        RequestBuilder builder = reqBuilder(method, template.toString());
+        builder.addHeader("Content-type", contentType);
+        builder.setBody(body);
+        return builder.build();
+    }
+
+    private RequestBuilder reqBuilder(String method, String url) {
+        RequestBuilder builder = new RequestBuilder(method);
+        if (realm != null) {
+            builder.setRealm(realm);
+        } else {
+            builder.addHeader("Authorization", "Bearer " + oauthToken);
+        }
+        headers.forEach(builder::setHeader);
+        return builder.setUrl(url);
+    }
+    
+    protected <T> ZendeskAsyncCompletionHandler<T> handle(final Class<T> clazz, final String name, final Class... typeParams) {
+    	return new BasicAsyncCompletionHandler<>(clazz, name, typeParams); 
+    }
+
+    private class BasicAsyncCompletionHandler<T> extends ZendeskAsyncCompletionHandler<T> {
+        private final Class<T> clazz;
+        private final String name;
+        private final Class[] typeParams;
+
+        public BasicAsyncCompletionHandler(Class clazz, String name, Class... typeParams) {
+            this.clazz = clazz;
+            this.name = name;
+            this.typeParams = typeParams;
+        }
+
+		@Override
+		public T onCompleted(Response response) throws Exception {
+			logResponse(response);
+			if(isStatus2xx(response)) {
+				if (typeParams.length > 0) {
+                    JavaType type = mapper.getTypeFactory().constructParametricType(clazz, typeParams);
+                    return mapper.convertValue(mapper.readTree(response.getResponseBodyAsStream()).get(name), type);
+                }
+				return mapper.convertValue(mapper.readTree(response.getResponseBodyAsStream()).get(name), clazz);
+			} else if (isRateLimitResponse(response)) {
+                throw new ZendeskResponseRateLimitException(response);
+            }
+            if (response.getStatusCode() == 404) {
+                return null;
+            }
+            throw new ZendeskResponseException(response);
+		}
+    }
+
+    private boolean isStatus2xx(Response response) {
+        return response.getStatusCode() / 100 == 2;
+    }
+
+    private boolean isRateLimitResponse(Response response) {
+        return response.getStatusCode() == 429;
+    }
 }

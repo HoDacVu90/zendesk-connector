@@ -1,0 +1,120 @@
+{
+  "format" : "10.0.0",
+  "id" : "18924D82A84ECCF6",
+  "kind" : "HTML_DIALOG",
+  "config" : {
+    "data" : "zendeskconnectordemo.zendeskForm.zendeskFormData"
+  },
+  "elements" : [ {
+      "id" : "f0",
+      "type" : "HtmlDialogStart",
+      "name" : "start()",
+      "config" : {
+        "callSignature" : "start",
+        "guid" : "18924D82A85F2677"
+      },
+      "visual" : {
+        "at" : { "x" : 96, "y" : 64 }
+      },
+      "connect" : { "id" : "f14", "to" : "f13" }
+    }, {
+      "id" : "f1",
+      "type" : "HtmlDialogEnd",
+      "visual" : {
+        "at" : { "x" : 352, "y" : 64 }
+      }
+    }, {
+      "id" : "f3",
+      "type" : "HtmlDialogEventStart",
+      "name" : "close",
+      "config" : {
+        "guid" : "18924D82A871C213"
+      },
+      "visual" : {
+        "at" : { "x" : 96, "y" : 160 }
+      },
+      "connect" : { "id" : "f7", "to" : "f6" }
+    }, {
+      "id" : "f4",
+      "type" : "HtmlDialogExit",
+      "visual" : {
+        "at" : { "x" : 352, "y" : 160 }
+      }
+    }, {
+      "id" : "f6",
+      "type" : "Script",
+      "config" : {
+        "security" : "system",
+        "output" : {
+          "code" : [
+            "import com.axonivy.connector.zendesk.ZendeskService;",
+            "",
+            "ZendeskService zendeskService = ZendeskService.getInstance();",
+            "in.ticket.files = in.uploadedFiles;",
+            "zendeskService.createTicketByRequest(in.ticket);"
+          ]
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 224, "y" : 160 }
+      },
+      "connect" : { "id" : "f5", "to" : "f4" }
+    }, {
+      "id" : "f8",
+      "type" : "HtmlDialogMethodStart",
+      "name" : "upload(FileUploadEvent)",
+      "config" : {
+        "callSignature" : "upload",
+        "input" : {
+          "params" : [
+            { "name" : "uploadEvent", "type" : "org.primefaces.event.FileUploadEvent" }
+          ],
+          "map" : {
+            "out.fileUploadEvent" : "param.uploadEvent"
+          }
+        },
+        "guid" : "189250508B126D41"
+      },
+      "visual" : {
+        "at" : { "x" : 88, "y" : 296 }
+      },
+      "connect" : { "id" : "f12", "to" : "f11" }
+    }, {
+      "id" : "f9",
+      "type" : "HtmlDialogExit",
+      "visual" : {
+        "at" : { "x" : 344, "y" : 296 }
+      }
+    }, {
+      "id" : "f11",
+      "type" : "Script",
+      "config" : {
+        "output" : {
+          "code" : [
+            "import org.apache.commons.io.FileUtils;",
+            "",
+            "java.io.File destFile = new java.io.File(in.fileUploadEvent.getFile().getFileName()); ",
+            "FileUtils.copyInputStreamToFile(in.fileUploadEvent.getFile().getInputStream(), destFile);",
+            "in.uploadedFiles.add(destFile);",
+            "ivy.log.debug(destFile.getAbsoluteFile());"
+          ]
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 216, "y" : 296 }
+      },
+      "connect" : { "id" : "f10", "to" : "f9" }
+    }, {
+      "id" : "f13",
+      "type" : "Script",
+      "config" : {
+        "output" : {
+          "code" : "in.ticket;"
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 224, "y" : 64 }
+      },
+      "connect" : { "id" : "f2", "to" : "f1" }
+    } ]
+}

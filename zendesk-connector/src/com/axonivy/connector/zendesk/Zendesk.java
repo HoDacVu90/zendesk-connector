@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
+import javax.ws.rs.HttpMethod;
+
 import org.asynchttpclient.AsyncCompletionHandler;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
@@ -17,7 +19,12 @@ import org.asynchttpclient.Realm;
 import org.asynchttpclient.Request;
 import org.asynchttpclient.RequestBuilder;
 import org.asynchttpclient.Response;
+import org.slf4j.LoggerFactory;
 
+import com.axonivy.connector.zendesk.dto.RequestDTO;
+import com.axonivy.connector.zendesk.dto.TicketDTO;
+import com.axonivy.connector.zendesk.model.Attachment;
+import com.axonivy.connector.zendesk.model.Comment;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -26,9 +33,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 
-import ch.ivyteam.ivy.environment.Ivy;
-import ch.ivyteam.log.Logger;
-
+//import ch.ivyteam.ivy.environment.Ivy;
+//import ch.ivyteam.log.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Zendesk implements Closeable {
 	private static final String JSON = "application/json; charset=UTF-8";
@@ -45,7 +53,8 @@ public class Zendesk implements Closeable {
     private boolean closed = false;
 	
     private Zendesk(AsyncHttpClient client, String url, String username, String password, Map<String, String> headers) {
-        this.logger = Ivy.log();
+//        this.logger = Ivy.log();
+    	this.logger = LoggerFactory.getLogger(Zendesk.class);
         this.closeClient = client == null;
         this.oauthToken = null;
         this.client = client == null ? new DefaultAsyncHttpClient(DEFAULT_ASYNC_HTTP_CLIENT_CONFIG) : client;
@@ -66,7 +75,8 @@ public class Zendesk implements Closeable {
     }
 
     private Zendesk(AsyncHttpClient client, String url, String oauthToken, Map<String, String> headers) {
-    	this.logger = Ivy.log();
+//    	this.logger = Ivy.log();
+    	this.logger = LoggerFactory.getLogger(Zendesk.class);
         this.closeClient = client == null;
         this.realm = null;
         this.client = client == null ? new DefaultAsyncHttpClient(DEFAULT_ASYNC_HTTP_CLIENT_CONFIG) : client;
@@ -79,6 +89,30 @@ public class Zendesk implements Closeable {
         this.headers = Collections.unmodifiableMap(headers);
 
         this.mapper = createMapper();
+    }
+    
+    public com.axonivy.connector.zendesk.model.Request createRequest(RequestDTO request) {
+    	return complete(submit(req(HttpMethod.POST, cnst("/requests.json"),
+    			JSON, json(Collections.singletonMap("request", request))),
+			handle(com.axonivy.connector.zendesk.model.Request.class, "request")));
+    }
+    
+    public Attachment.Upload createUpload(String fileName, byte[] content) {
+        return createUpload(null, fileName, "application/binary", content);
+    }
+
+    public Attachment.Upload createUpload(String fileName, String contentType, byte[] content) {
+        return createUpload(null, fileName, contentType, content);
+    }
+
+    public Attachment.Upload createUpload(String token, String fileName, String contentType, byte[] content) {
+        TemplateUri uri = tmpl("/uploads.json{?filename,token}").set("filename", fileName);
+        if (token != null) {
+            uri.set("token", token);
+        }
+        return complete(
+                submit(req("POST", uri, contentType,
+                        content), handle(Attachment.Upload.class, "upload")));
     }
     
     public static ObjectMapper createMapper() {

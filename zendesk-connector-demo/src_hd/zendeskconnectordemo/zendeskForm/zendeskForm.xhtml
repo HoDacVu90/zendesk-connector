@@ -1,0 +1,87 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:ic="http://ivyteam.ch/jsf/component"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+<h:body>
+	<ui:composition template="/layouts/basic-10.xhtml">
+		<ui:define name="title">zendeskForm</ui:define>
+		<ui:define name="content">
+
+			<h:form id="form">
+				<p:messages />
+				<div class="ui-g-12">
+					<p:fieldset styleClass="MarTop10 ui-g-12">
+						<div class="ui-g flex-align-center">
+							<div class="ui-g-2">
+								<p:outputLabel for="subject"
+									value="Subject" />
+							</div>
+							<div class="ui-g-10 ui-fluid">
+								<p:inputText id="subject" required="false"
+									value="#{data.ticket.subject}"></p:inputText>
+							</div>
+						</div>
+						<div class="ui-g flex-align-center">
+							<div class="ui-g-2">
+								<p:outputLabel for="name"
+									value="Your name" />
+							</div>
+							<div class="ui-g-10 ui-fluid">
+								<p:inputText id="name" required="false"
+									value="#{data.ticket.name}"></p:inputText>
+							</div>
+						</div>
+						<div class="ui-g flex-align-center">
+							<div class="ui-g-2">
+								<p:outputLabel for="email"
+									value="Email address" />
+							</div>
+							<div class="ui-g-10 ui-fluid">
+								<p:inputText id="email" required="false"
+									value="#{data.ticket.email}"></p:inputText>
+							</div>
+						</div>
+						<div class="ui-g flex-align-center">
+							<div class="ui-g-2">
+								<p:outputLabel for="body"
+									value="How can we help you?" />
+							</div>
+							<div class="ui-g-10 ui-fluid">
+								<p:inputTextarea id="body" height="100"
+									value="#{data.ticket.body}" required="false"></p:inputTextarea>
+							</div>
+						</div>
+						<div class="ui-g flex-align-center">
+							<div class="ui-g-2">
+								<p:outputLabel
+									value="Attachments" />
+							</div>
+							<div class="ui-g-10 ui-fluid" >
+								<p:fileUpload
+									label="Add file"
+									update="messages"								
+									actionListener="#{logic.upload}" dragDropSupport="false"
+									></p:fileUpload>
+									<p:growl id="messages" showDetail="true" keepAlive="true"/>
+								<br />
+								
+							</div>
+						</div>
+					</p:fieldset>
+				</div>
+				<br />
+				<div class="ui-g-12 MarTop10">
+					<p:commandButton id="proceed" actionListener="#{logic.close}" 
+						value="Proceed" update="form" icon="pi pi-check"
+						style="float: right; margin-top: 20px; margin-right: 10px;" />	
+				</div>
+			</h:form>
+
+		</ui:define>
+	</ui:composition>
+</h:body>
+
+</html>

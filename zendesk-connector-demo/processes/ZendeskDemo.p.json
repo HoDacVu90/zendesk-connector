@@ -1,0 +1,38 @@
+{
+  "format" : "10.0.0",
+  "id" : "18924D74A22C13D8",
+  "config" : {
+    "data" : "com.axonivy.connector.zendesk.demo.Data"
+  },
+  "elements" : [ {
+      "id" : "f0",
+      "type" : "RequestStart",
+      "name" : "start.ivp",
+      "config" : {
+        "callSignature" : "start",
+        "outLink" : "start.ivp"
+      },
+      "visual" : {
+        "at" : { "x" : 96, "y" : 64 }
+      },
+      "connect" : { "id" : "f3", "to" : "f2" }
+    }, {
+      "id" : "f1",
+      "type" : "TaskEnd",
+      "visual" : {
+        "at" : { "x" : 456, "y" : 64 }
+      }
+    }, {
+      "id" : "f2",
+      "type" : "DialogCall",
+      "name" : "zendeskForm",
+      "config" : {
+        "dialogId" : "zendeskconnectordemo.zendeskForm",
+        "startMethod" : "start()"
+      },
+      "visual" : {
+        "at" : { "x" : 288, "y" : 64 }
+      },
+      "connect" : { "id" : "f4", "to" : "f1" }
+    } ]
+}

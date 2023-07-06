@@ -7,11 +7,8 @@
 #
 Variables:
 #  myVariable: value
-  com:
-    axonivy:
-      connector:
-        zendesk:
-          auth:
-            url: https://coffee6767.zendesk.com
-            username: hodacvu90@gmail.com
-            token: 5IfhWroC2G7ZdDiyr0YKQBtQ4fCLODywA7TLlge9
+  zendesk-connector:
+      auth:
+        subdomain: coffee6767
+        username: hodacvu90@gmail.com/token
+        password: 5IfhWroC2G7ZdDiyr0YKQBtQ4fCLODywA7TLlge9

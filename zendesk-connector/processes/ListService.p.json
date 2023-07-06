@@ -1,0 +1,60 @@
+{
+  "format" : "10.0.0",
+  "id" : "1892AD7A47CF5C50",
+  "kind" : "CALLABLE_SUB",
+  "config" : {
+    "data" : "com.axonivy.connector.zendesk.ListServiceData"
+  },
+  "elements" : [ {
+      "id" : "f0",
+      "type" : "CallSubStart",
+      "name" : "call()",
+      "config" : {
+        "callSignature" : "call",
+        "result" : {
+          "params" : [
+            { "name" : "tickets", "type" : "java.util.List<com.axonivy.connector.zendesk.connector.rest.Ticket>" }
+          ],
+          "map" : {
+            "result.tickets" : "in.tickets"
+          }
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 96, "y" : 64 }
+      },
+      "connect" : { "id" : "f4", "to" : "f3" }
+    }, {
+      "id" : "f1",
+      "type" : "CallSubEnd",
+      "visual" : {
+        "at" : { "x" : 568, "y" : 64 }
+      }
+    }, {
+      "id" : "f3",
+      "type" : "RestClientCall",
+      "name" : "get ticket list",
+      "config" : {
+        "path" : "/tickets",
+        "clientId" : "511cd2cb-fb05-4df7-98a8-e8f0fc669317",
+        "clientErrorCode" : "ivy:error:rest:client",
+        "statusErrorCode" : "ivy:error:rest:client",
+        "responseMapping" : {
+          "out.tickets" : "result.tickets"
+        },
+        "resultType" : "com.axonivy.connector.zendesk.connector.rest.InlineResponse200"
+      },
+      "visual" : {
+        "at" : { "x" : 328, "y" : 64 }
+      },
+      "boundaries" : [ {
+          "id" : "f5",
+          "type" : "ErrorBoundaryEvent",
+          "visual" : {
+            "at" : { "x" : 360, "y" : 104 }
+          },
+          "connect" : { "id" : "f6", "to" : "f1", "via" : [ { "x" : 568, "y" : 104 } ] }
+        } ],
+      "connect" : { "id" : "f2", "to" : "f1" }
+    } ]
+}

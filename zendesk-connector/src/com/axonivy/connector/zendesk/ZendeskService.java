@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
+import com.axonivy.connector.zendesk.connector.rest.Upload;
+import com.axonivy.connector.zendesk.connector.rest.UploadDTO;
 import com.axonivy.connector.zendesk.dto.TicketDTO;
 import com.axonivy.connector.zendesk.dto.TicketFormDTO;
 import com.axonivy.connector.zendesk.enums.Priority;
@@ -63,6 +65,9 @@ public class ZendeskService {
 	
 	public Attachment.Upload upload(File file) {
 		Attachment.Upload result = null;
+		com.axonivy.connector.zendesk.connector.rest.Ticket ticket = new com.axonivy.connector.zendesk.connector.rest.Ticket();
+		UploadDTO upload = new UploadDTO();
+		upload.setContent(file);
 		try {
 			result = zendesk.createUpload(file.getName(), FileUtils.readFileToByteArray(file));
 		} catch (IOException e) {

@@ -8,3 +8,9 @@ uploadedFiles java.util.List<java.io.File> #field
 uploadedFiles PERSISTENT #fieldModifier
 tickets java.util.List<com.axonivy.connector.zendesk.connector.rest.Ticket> #field
 tickets PERSISTENT #fieldModifier
+index Integer #field
+index PERSISTENT #fieldModifier
+uploadDTO com.axonivy.connector.zendesk.connector.rest.UploadDTO #field
+uploadDTO PERSISTENT #fieldModifier
+token String #field
+token PERSISTENT #fieldModifier

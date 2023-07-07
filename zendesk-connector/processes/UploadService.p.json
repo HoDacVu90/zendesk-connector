@@ -1,0 +1,95 @@
+{
+  "format" : "10.0.0",
+  "id" : "1892F7462C2E1968",
+  "kind" : "CALLABLE_SUB",
+  "config" : {
+    "data" : "com.axonivy.connector.zendesk.UploadServiceData"
+  },
+  "elements" : [ {
+      "id" : "f0",
+      "type" : "CallSubStart",
+      "name" : "call(UploadDTO)",
+      "config" : {
+        "callSignature" : "call",
+        "input" : {
+          "params" : [
+            { "name" : "uploadDTO", "type" : "com.axonivy.connector.zendesk.connector.rest.UploadDTO" }
+          ],
+          "map" : {
+            "out.uploadDTO" : "param.uploadDTO"
+          }
+        },
+        "result" : {
+          "params" : [
+            { "name" : "upload", "type" : "com.axonivy.connector.zendesk.connector.rest.Upload" }
+          ],
+          "map" : {
+            "result.upload" : "in.upload"
+          }
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 96, "y" : 64 }
+      },
+      "connect" : { "id" : "f6", "to" : "f5" }
+    }, {
+      "id" : "f1",
+      "type" : "CallSubEnd",
+      "visual" : {
+        "at" : { "x" : 512, "y" : 64 }
+      }
+    }, {
+      "id" : "f3",
+      "type" : "RestClientCall",
+      "config" : {
+        "bodyRaw" : "<%=in.uploadFileDTO.content%>",
+        "bodyObjectMapping" : {
+          "param" : "org.apache.commons.io.FileUtils.readFileToByteArray(in.uploadDTO.content)"
+        },
+        "clientId" : "511cd2cb-fb05-4df7-98a8-e8f0fc669317",
+        "method" : "POST",
+        "queryParams" : {
+          "filename" : "in.uploadDTO.fileName"
+        },
+        "statusErrorCode" : "ivy:error:rest:client",
+        "bodyObjectType" : "[B",
+        "bodyInputType" : "RAW",
+        "responseCode" : [
+          "import com.axonivy.connector.zendesk.ZendeskUtils;",
+          "ivy.log.info(\"response: \" + in.response);",
+          "in.upload = ZendeskUtils.convertToUpload(in.response);",
+          "ivy.log.info(\"upload token: \" + in.upload.token);"
+        ],
+        "bodyForm" : {
+          "content" : "in.uploadDTO.content"
+        },
+        "path" : "/uploads",
+        "clientErrorCode" : "ivy:error:rest:client",
+        "responseMapping" : {
+          "out.response" : "result"
+        },
+        "resultType" : "java.lang.String",
+        "bodyMediaType" : "application/octet-stream"
+      },
+      "visual" : {
+        "at" : { "x" : 384, "y" : 64 }
+      },
+      "connect" : { "id" : "f2", "to" : "f1" }
+    }, {
+      "id" : "f5",
+      "type" : "Script",
+      "config" : {
+        "output" : {
+          "code" : [
+            "import org.apache.commons.io.FileUtils;",
+            "in.uploadFileDTO.fileName = in.uploadDTO.fileName;",
+            "in.uploadFileDTO.content = FileUtils.readFileToByteArray(in.uploadDTO.content);"
+          ]
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 224, "y" : 64 }
+      },
+      "connect" : { "id" : "f4", "to" : "f3" }
+    } ]
+}

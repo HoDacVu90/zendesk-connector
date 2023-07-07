@@ -62,7 +62,7 @@
 							<div class="ui-g-10 ui-fluid" >
 								<p:outputPanel id="uploadedFiles">								
 									<p:fileUpload id="fileUpload" listener="#{logic.upload}" 
-	            auto="true" mode="advanced" label="Add Image" update="form" />
+	            auto="true" mode="advanced" label="Add Image" update="uploadedFiles" />
 								<p:dataTable id="uploadedFilesTable"
 									var="file" value="#{data.uploadedFiles}"
 									scrollHeight="120" scrollable="true"

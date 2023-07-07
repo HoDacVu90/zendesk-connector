@@ -1,0 +1,6 @@
+ListServiceData #class
+com.axonivy.connector.zendesk #namespace
+tickets java.util.List<com.axonivy.connector.zendesk.connector.rest.Ticket> #field
+count Integer #field
+nextPage Integer #field
+previousPage Integer #field

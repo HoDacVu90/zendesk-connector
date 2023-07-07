@@ -1,2 +1,4 @@
 Data #class
 com.axonivy.connector.zendesk.demo #namespace
+ticket com.axonivy.connector.zendesk.connector.rest.Ticket #field
+tickets java.util.List<com.axonivy.connector.zendesk.connector.rest.Ticket> #field

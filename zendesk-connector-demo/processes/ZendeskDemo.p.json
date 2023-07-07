@@ -34,5 +34,42 @@
         "at" : { "x" : 288, "y" : 64 }
       },
       "connect" : { "id" : "f4", "to" : "f1" }
+    }, {
+      "id" : "f5",
+      "type" : "RequestStart",
+      "name" : "start2.ivp",
+      "config" : {
+        "callSignature" : "start2",
+        "outLink" : "start2.ivp"
+      },
+      "visual" : {
+        "at" : { "x" : 96, "y" : 184 }
+      },
+      "connect" : { "id" : "f9", "to" : "f8" }
+    }, {
+      "id" : "f6",
+      "type" : "TaskEnd",
+      "visual" : {
+        "at" : { "x" : 456, "y" : 184 }
+      }
+    }, {
+      "id" : "f8",
+      "type" : "SubProcessCall",
+      "name" : "GetService",
+      "config" : {
+        "processCall" : "GetService:call2()",
+        "output" : {
+          "map" : {
+            "out" : "in",
+            "out.ticket" : "result.ticket",
+            "out.ticket.id" : "result.ticket.id",
+            "out.ticket.subject" : "result.ticket.subject"
+          }
+        }
+      },
+      "visual" : {
+        "at" : { "x" : 288, "y" : 184 }
+      },
+      "connect" : { "id" : "f7", "to" : "f6" }
     } ]
 }

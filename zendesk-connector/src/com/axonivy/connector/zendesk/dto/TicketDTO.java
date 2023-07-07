@@ -1,58 +1,39 @@
 package com.axonivy.connector.zendesk.dto;
 
-import java.io.File;
 import java.util.List;
 
+import com.axonivy.connector.zendesk.enums.Priority;
+import com.axonivy.connector.zendesk.enums.Type;
+import com.axonivy.connector.zendesk.model.Comment;
+import com.axonivy.connector.zendesk.model.CustomFieldValue;
+import com.axonivy.connector.zendesk.model.Ticket.Requester;
 
 public class TicketDTO {
-	private String name;
-	private String email;
 	private String subject;
-	private String body;
-	private String fileName;
-	private byte[] content;
-	private List<File> files;
+	private Comment comment;
+	private Requester requester;
 
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    protected Priority priority;
+    protected List<CustomFieldValue> customFields;
+    protected Type type;
+	
 	public String getSubject() {
 		return subject;
 	}
 	public void setSubject(String subject) {
 		this.subject = subject;
 	}
-	public String getBody() {
-		return body;
+	public Comment getComment() {
+		return comment;
 	}
-	public void setBody(String body) {
-		this.body = body;
+	public void setComment(Comment comment) {
+		this.comment = comment;
 	}
-	public String getFileName() {
-		return fileName;
+	public Requester getRequester() {
+		return requester;
 	}
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
+	public void setRequester(Requester requester) {
+		this.requester = requester;
 	}
-	public byte[] getContent() {
-		return content;
-	}
-	public void setContent(byte[] content) {
-		this.content = content;
-	}
-	public List<File> getFiles() {
-		return files;
-	}
-	public void setFiles(List<File> files) {
-		this.files = files;
-	}
+	
 }

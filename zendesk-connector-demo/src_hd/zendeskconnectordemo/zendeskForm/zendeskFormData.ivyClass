@@ -1,6 +1,6 @@
 zendeskFormData #class
 zendeskconnectordemo.zendeskForm #namespace
-ticket com.axonivy.connector.zendesk.dto.TicketDTO #field
+ticket com.axonivy.connector.zendesk.dto.TicketFormDTO #field
 ticket PERSISTENT #fieldModifier
 fileUploadEvent org.primefaces.event.FileUploadEvent #field
 fileUploadEvent PERSISTENT #fieldModifier

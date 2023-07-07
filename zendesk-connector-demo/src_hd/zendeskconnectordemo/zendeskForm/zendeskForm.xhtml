@@ -10,7 +10,7 @@
 		<ui:define name="title">zendeskForm</ui:define>
 		<ui:define name="content">
 
-			<h:form id="form">
+			<h:form enctype="multipart/form-data" id="form">
 				<p:messages />
 				<div class="ui-g-12">
 					<p:fieldset styleClass="MarTop10 ui-g-12">
@@ -60,13 +60,20 @@
 									value="Attachments" />
 							</div>
 							<div class="ui-g-10 ui-fluid" >
-								<p:fileUpload
-									label="Add file"
-									update="messages"								
-									actionListener="#{logic.upload}" dragDropSupport="false"
-									></p:fileUpload>
-									<p:growl id="messages" showDetail="true" keepAlive="true"/>
-								<br />
+								<p:outputPanel id="uploadedFiles">									
+									<p:fileUpload id="fileUpload" listener="#{logic.upload}" 
+	            auto="true" mode="advanced" label="Add Image" update="form" />
+								<p:dataTable id="uploadedFilesTable"
+									var="file" value="#{data.uploadedFiles}"
+									scrollHeight="120" scrollable="true"
+									>
+									<p:column style=""
+										headerText="Title">
+										<p:outputLabel value="#{file.name} " />
+									</p:column>									
+									</p:dataTable>
+									<br />								
+								</p:outputPanel>
 								
 							</div>
 						</div>

@@ -2,8 +2,10 @@ package com.axonivy.connector.zendesk;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -21,10 +23,11 @@ import org.asynchttpclient.RequestBuilder;
 import org.asynchttpclient.Response;
 import org.slf4j.LoggerFactory;
 
-import com.axonivy.connector.zendesk.dto.RequestDTO;
 import com.axonivy.connector.zendesk.dto.TicketDTO;
+import com.axonivy.connector.zendesk.dto.TicketFormDTO;
 import com.axonivy.connector.zendesk.model.Attachment;
 import com.axonivy.connector.zendesk.model.Comment;
+import com.axonivy.connector.zendesk.model.Ticket;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -91,7 +94,7 @@ public class Zendesk implements Closeable {
         this.mapper = createMapper();
     }
     
-    public com.axonivy.connector.zendesk.model.Request createRequest(RequestDTO request) {
+    public com.axonivy.connector.zendesk.model.Request createRequest(TicketDTO request) {
     	return complete(submit(req(HttpMethod.POST, cnst("/requests.json"),
     			JSON, json(Collections.singletonMap("request", request))),
 			handle(com.axonivy.connector.zendesk.model.Request.class, "request")));
@@ -113,6 +116,16 @@ public class Zendesk implements Closeable {
         return complete(
                 submit(req("POST", uri, contentType,
                         content), handle(Attachment.Upload.class, "upload")));
+    }
+    
+    public ListenableFuture<Ticket> createTicketAsync(TicketDTO ticket) {
+        return submit(req("POST", cnst("/tickets.json"),
+                JSON, json(Collections.singletonMap("ticket", ticket))),
+                handle(Ticket.class, "ticket"));
+    }
+
+    public Ticket createTicket(TicketDTO ticket) {
+        return complete(createTicketAsync(ticket));
     }
     
     public static ObjectMapper createMapper() {

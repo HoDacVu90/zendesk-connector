@@ -7,12 +7,13 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
-import com.axonivy.connector.zendesk.dto.RequestDTO;
 import com.axonivy.connector.zendesk.dto.TicketDTO;
+import com.axonivy.connector.zendesk.dto.TicketFormDTO;
 import com.axonivy.connector.zendesk.enums.Priority;
 import com.axonivy.connector.zendesk.model.Attachment;
 import com.axonivy.connector.zendesk.model.Comment;
 import com.axonivy.connector.zendesk.model.Request;
+import com.axonivy.connector.zendesk.model.Ticket;
 import com.axonivy.connector.zendesk.model.Ticket.Requester;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,12 +36,12 @@ public class ZendeskService {
 	}
 	
 	public static void createClientWithToken() {
-//		String url = Ivy.var().get("com.axonivy.connector.zendesk.auth.url");
-//		String username = Ivy.var().get("com.axonivy.connector.zendesk.auth.username");
-//		String token = Ivy.var().get("com.axonivy.connector.zendesk.token");
-		String url = "https://coffee6767.zendesk.com";
-		String username = "hodacvu90@gmail.com";
-		String token = "5IfhWroC2G7ZdDiyr0YKQBtQ4fCLODywA7TLlge9";
+		String url = Ivy.var().get("com.axonivy.connector.zendesk.auth.url");
+		String username = Ivy.var().get("com.axonivy.connector.zendesk.auth.username");
+		String token = Ivy.var().get("com.axonivy.connector.zendesk.token");
+//		String url = "https://coffee6767.zendesk.com";
+//		String username = "hodacvu90@gmail.com";
+//		String token = "5IfhWroC2G7ZdDiyr0YKQBtQ4fCLODywA7TLlge9";
 		
 		zendesk = new Zendesk.Builder(url)
 				.setUsername(username)
@@ -55,8 +56,8 @@ public class ZendeskService {
         zendesk = null;
     }
 	
-	public Request createTicket(RequestDTO request) {
-		Request result = zendesk.createRequest(request);
+	public Request createRequest(TicketDTO ticket) {
+		Request result = zendesk.createRequest(ticket);
 		return result;
 	}
 	
@@ -78,34 +79,34 @@ public class ZendeskService {
 		return fileTokens;
 	}
 	
-//	public Request createTicket(TicketDTO ticket) {
-//		uploads(ticket.getFiles());
-//		Request request = convertToRequest(ticket);
-//		return createTicket(request);
-//	}
-	
-	public Request createTicketByRequest(TicketDTO ticket) {
+	public Ticket createTicket(TicketFormDTO ticket) {
 		uploads(ticket.getFiles());
-		RequestDTO request = convertToRequest(ticket);
-		return createTicket(request);
+		TicketDTO ticketDTO = convertToRequest(ticket);
+		return zendesk.createTicket(ticketDTO);
+	}
+	
+	public Request createTicketByRequest(TicketFormDTO ticket) {
+		uploads(ticket.getFiles());
+		TicketDTO ticketDTO = convertToRequest(ticket);
+		return createRequest(ticketDTO);
 	}
 
-	private RequestDTO convertToRequest(TicketDTO ticket) {
-		RequestDTO request = new RequestDTO();
-		request.setSubject(ticket.getSubject());
+	private TicketDTO convertToRequest(TicketFormDTO ticket) {
+		TicketDTO ticketDTO = new TicketDTO();
+		ticketDTO.setSubject(ticket.getSubject());
 		
 		Comment comment = new Comment();
 		comment.setUploads(fileTokens);
 		comment.setBody(ticket.getBody());
 		
-		request.setComment(comment);
+		ticketDTO.setComment(comment);
 		
 		Requester requester = new Requester();
 		requester.setName(ticket.getName());
 		requester.setEmail(ticket.getEmail());
-		request.setRequester(requester);
+		ticketDTO.setRequester(requester);
 		
-		return request;
+		return ticketDTO;
 	}
 
 }

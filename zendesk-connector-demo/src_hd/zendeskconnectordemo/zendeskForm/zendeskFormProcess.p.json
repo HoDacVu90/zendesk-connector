@@ -80,15 +80,10 @@
       },
       "connect" : { "id" : "f12", "to" : "f11" }
     }, {
-      "id" : "f9",
-      "type" : "HtmlDialogExit",
-      "visual" : {
-        "at" : { "x" : 344, "y" : 296 }
-      }
-    }, {
       "id" : "f11",
       "type" : "Script",
       "config" : {
+        "security" : "system",
         "output" : {
           "code" : [
             "import org.apache.commons.io.FileUtils;",
@@ -116,5 +111,11 @@
         "at" : { "x" : 224, "y" : 64 }
       },
       "connect" : { "id" : "f2", "to" : "f1" }
+    }, {
+      "id" : "f9",
+      "type" : "HtmlDialogEnd",
+      "visual" : {
+        "at" : { "x" : 408, "y" : 296 }
+      }
     } ]
 }

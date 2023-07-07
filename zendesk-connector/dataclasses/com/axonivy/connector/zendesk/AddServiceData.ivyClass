@@ -1,2 +1,4 @@
 AddServiceData #class
 com.axonivy.connector.zendesk #namespace
+ticket com.axonivy.connector.zendesk.connector.rest.Ticket #field
+tickets java.util.List<com.axonivy.connector.zendesk.connector.rest.Ticket> #field

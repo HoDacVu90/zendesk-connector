@@ -1,8 +1,10 @@
 zendeskFormData #class
 zendeskconnectordemo.zendeskForm #namespace
-ticket com.axonivy.connector.zendesk.dto.TicketFormDTO #field
+ticket com.axonivy.connector.zendesk.connector.rest.Ticket #field
 ticket PERSISTENT #fieldModifier
 fileUploadEvent org.primefaces.event.FileUploadEvent #field
 fileUploadEvent PERSISTENT #fieldModifier
 uploadedFiles java.util.List<java.io.File> #field
 uploadedFiles PERSISTENT #fieldModifier
+tickets java.util.List<com.axonivy.connector.zendesk.connector.rest.Ticket> #field
+tickets PERSISTENT #fieldModifier

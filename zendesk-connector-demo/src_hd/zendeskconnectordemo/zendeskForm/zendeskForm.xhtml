@@ -31,7 +31,7 @@
 							</div>
 							<div class="ui-g-10 ui-fluid">
 								<p:inputText id="name" required="false"
-									value="#{data.ticket.name}"></p:inputText>
+									value="#{data.ticket.requester.name}"></p:inputText>
 							</div>
 						</div>
 						<div class="ui-g flex-align-center">
@@ -41,7 +41,7 @@
 							</div>
 							<div class="ui-g-10 ui-fluid">
 								<p:inputText id="email" required="false"
-									value="#{data.ticket.email}"></p:inputText>
+									value="#{data.ticket.requester.email}"></p:inputText>
 							</div>
 						</div>
 						<div class="ui-g flex-align-center">
@@ -51,7 +51,7 @@
 							</div>
 							<div class="ui-g-10 ui-fluid">
 								<p:inputTextarea id="body" height="100"
-									value="#{data.ticket.body}" required="false"></p:inputTextarea>
+									value="#{data.ticket.comment.htmlBody}" required="false"></p:inputTextarea>
 							</div>
 						</div>
 						<div class="ui-g flex-align-center">
@@ -60,7 +60,7 @@
 									value="Attachments" />
 							</div>
 							<div class="ui-g-10 ui-fluid" >
-								<p:outputPanel id="uploadedFiles">									
+								<p:outputPanel id="uploadedFiles">								
 									<p:fileUpload id="fileUpload" listener="#{logic.upload}" 
 	            auto="true" mode="advanced" label="Add Image" update="form" />
 								<p:dataTable id="uploadedFilesTable"

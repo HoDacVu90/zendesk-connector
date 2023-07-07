@@ -8,19 +8,59 @@
   "elements" : [ {
       "id" : "f0",
       "type" : "CallSubStart",
-      "name" : "call()",
+      "name" : "call(Ticket)",
       "config" : {
-        "callSignature" : "call"
+        "callSignature" : "call",
+        "input" : {
+          "params" : [
+            { "name" : "ticket", "type" : "com.axonivy.connector.zendesk.connector.rest.Ticket" }
+          ],
+          "map" : {
+            "out.ticket" : "param.ticket"
+          }
+        },
+        "result" : {
+          "params" : [
+            { "name" : "ticket", "type" : "com.axonivy.connector.zendesk.connector.rest.Ticket" }
+          ],
+          "map" : {
+            "result.ticket" : "in.ticket"
+          }
+        }
       },
       "visual" : {
         "at" : { "x" : 96, "y" : 64 }
       },
-      "connect" : { "id" : "f2", "to" : "f1" }
+      "connect" : { "id" : "f4", "to" : "f3" }
     }, {
       "id" : "f1",
       "type" : "CallSubEnd",
       "visual" : {
-        "at" : { "x" : 352, "y" : 64 }
+        "at" : { "x" : 480, "y" : 64 }
       }
+    }, {
+      "id" : "f3",
+      "type" : "RestClientCall",
+      "config" : {
+        "path" : "/tickets",
+        "bodyObjectMapping" : {
+          "param.ticket" : "in.ticket"
+        },
+        "clientId" : "511cd2cb-fb05-4df7-98a8-e8f0fc669317",
+        "clientErrorCode" : "ivy:error:rest:client",
+        "method" : "POST",
+        "statusErrorCode" : "ivy:error:rest:client",
+        "responseMapping" : {
+          "out.ticket" : "result.ticket"
+        },
+        "bodyObjectType" : "com.axonivy.connector.zendesk.connector.rest.TicketsBody",
+        "resultType" : "com.axonivy.connector.zendesk.connector.rest.InlineResponse2001",
+        "bodyInputType" : "ENTITY",
+        "responseCode" : "ivy.log.info(\"ticket created: \" + in.ticket);"
+      },
+      "visual" : {
+        "at" : { "x" : 288, "y" : 64 }
+      },
+      "connect" : { "id" : "f2", "to" : "f1" }
     } ]
 }

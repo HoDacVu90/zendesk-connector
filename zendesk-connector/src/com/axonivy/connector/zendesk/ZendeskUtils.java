@@ -11,6 +11,7 @@ public class ZendeskUtils {
 		
 		Upload upload = new Upload();
 		upload.setToken(mapper.readTree(object).get("upload").get("token").asText());
+		
 		return upload;
 	}
 }

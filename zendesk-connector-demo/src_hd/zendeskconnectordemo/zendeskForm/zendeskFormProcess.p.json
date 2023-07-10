@@ -87,8 +87,14 @@
       "config" : {
         "output" : {
           "code" : [
+            "import com.axonivy.connector.zendesk.connector.rest.TicketDTOCustomFields;",
             "in.ticket;",
             "in.ticket.comment;",
+            "in.bean = new zendeskconnectordemo.bean.CreateTicketBean();",
+            "",
+            "TicketDTOCustomFields customfield = new TicketDTOCustomFields();",
+            "customfield.id(7351123491855);",
+            "in.ticket.customFields.add(customfield);",
             "",
             "in.ticket.requester.name = ivy.session.getSessionUser().getFullName();",
             "in.ticket.requester.email = ivy.session.getSessionUser().getEMailAddress();"
@@ -137,7 +143,15 @@
       "name" : "init index",
       "config" : {
         "output" : {
-          "code" : "in.index = 0;"
+          "code" : [
+            "import zendeskconnectordemo.bean.CreateTicketBean;",
+            "import javax.faces.context.FacesContext;",
+            "import java.util.Map;",
+            "",
+            "in.index = 0;",
+            "",
+            "ivy.log.info(\"test : \"+ in.bean.getCustomFieldValues());;"
+          ]
         }
       },
       "visual" : {
@@ -151,7 +165,8 @@
         "at" : { "x" : 352, "y" : 160 }
       },
       "connect" : [
-        { "id" : "f29", "to" : "f28" }
+        { "id" : "f29", "to" : "f28", "condition" : "in.uploadedFiles.size() > 0" },
+        { "id" : "f6", "to" : "f15", "via" : [ { "x" : 352, "y" : 248 }, { "x" : 704, "y" : 248 }, { "x" : 1056, "y" : 248 } ] }
       ]
     }, {
       "id" : "f21",

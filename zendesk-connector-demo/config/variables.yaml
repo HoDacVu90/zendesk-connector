@@ -7,3 +7,11 @@
 #
 Variables:
 #  myVariable: value
+
+  com:
+    axonivy:
+      connector:
+        zendesk:
+          custom:
+            fields:
+              computerModel: 7351123491855

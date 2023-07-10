@@ -2,6 +2,7 @@ RestClients:
   Zendesk (Zendesk):
     UUID: 511cd2cb-fb05-4df7-98a8-e8f0fc669317
     Url: https://{subdomain}.zendesk.com/api/v2
+    Icon: res:/webContent/icons/icons8-zendesk-50.png
     Features:
     - ch.ivyteam.ivy.rest.client.mapper.JsonFeature
     - ch.ivyteam.ivy.rest.client.authentication.HttpBasicAuthenticationFeature

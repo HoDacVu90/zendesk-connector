@@ -18,3 +18,7 @@ file java.io.File #field
 file PERSISTENT #fieldModifier
 fileName String #field
 fileName PERSISTENT #fieldModifier
+event org.primefaces.event.ItemSelectEvent #field
+event PERSISTENT #fieldModifier
+bean zendeskconnectordemo.bean.CreateTicketBean #field
+bean PERSISTENT #fieldModifier

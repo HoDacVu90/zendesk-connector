@@ -4,12 +4,13 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:ic="http://ivyteam.ch/jsf/component"
 	xmlns:p="http://primefaces.org/ui"
-	xmlns:pe="http://primefaces.org/ui/extensions">
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+
 <h:body>
 	<ui:composition template="/layouts/basic-10.xhtml">
 		<ui:define name="title">zendeskForm</ui:define>
 		<ui:define name="content">
-
 			<h:form enctype="multipart/form-data" id="form">
 				<p:messages />
 				<div class="ui-g-12">
@@ -52,6 +53,24 @@
 							<div class="ui-g-10 ui-fluid">
 								<p:inputTextarea id="body" height="100"
 									value="#{data.ticket.comment.htmlBody}" required="false"></p:inputTextarea>
+							</div>
+						</div>
+						<div class="ui-g flex-align-center">
+							<div class="ui-g-2">
+								<p:outputLabel for="@next"
+									value="Computer Model" />
+							</div>
+							<div class="ui-g-10 ui-fluid">
+								<p:outputPanel id="addComputerModel">
+									 <p:selectOneMenu id="option" value="#{data.ticket.customFields.get(0).value}" zendeskFieldId="#{ivy.var.get('com.axonivy.connector.zendesk.custom.fields.computerModel')}">
+									 	<p:ajax update="addComputerModel" listener="#{data.bean.assignCustomfields}" ></p:ajax>
+					                    <f:selectItem itemLabel="Select One" itemValue=""/>
+					                    <f:selectItem itemLabel="DELL" itemValue="DELL"/>
+					                    <f:selectItem itemLabel="MAC" itemValue="MAC"/>
+					                    <f:selectItem itemLabel="HP" itemValue="HP"/>
+					                    <f:selectItem itemLabel="ACER" itemValue="ACER"/>
+					                </p:selectOneMenu>
+				                </p:outputPanel>
 							</div>
 						</div>
 						<div class="ui-g flex-align-center">

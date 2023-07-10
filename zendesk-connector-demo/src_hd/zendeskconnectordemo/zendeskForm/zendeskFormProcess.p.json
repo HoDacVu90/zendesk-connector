@@ -92,9 +92,8 @@
             "in.ticket.comment;",
             "in.bean = new zendeskconnectordemo.bean.CreateTicketBean();",
             "",
-            "TicketDTOCustomFields customfield = new TicketDTOCustomFields();",
-            "customfield.id(7351123491855);",
-            "in.ticket.customFields.add(customfield);",
+            "//TicketDTOCustomFields customfield = new TicketDTOCustomFields();",
+            "//in.ticket.customFields.add(customfield);",
             "",
             "in.ticket.requester.name = ivy.session.getSessionUser().getFullName();",
             "in.ticket.requester.email = ivy.session.getSessionUser().getEMailAddress();"
@@ -140,7 +139,7 @@
     }, {
       "id" : "f17",
       "type" : "Script",
-      "name" : "init index",
+      "name" : "init",
       "config" : {
         "output" : {
           "code" : [
@@ -149,8 +148,9 @@
             "import java.util.Map;",
             "",
             "in.index = 0;",
+            "//in.ticket.customFields = in.bean.getCustomFieldValues();",
             "",
-            "ivy.log.info(\"test : \"+ in.bean.getCustomFieldValues());;"
+            "in.ticket.customFields = in.bean.integrateCustomFields();"
           ]
         }
       },

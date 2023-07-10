@@ -62,8 +62,9 @@
 							</div>
 							<div class="ui-g-10 ui-fluid">
 								<p:outputPanel id="addComputerModel">
-									 <p:selectOneMenu id="option" value="#{data.ticket.customFields.get(0).value}" zendeskFieldId="#{ivy.var.get('com.axonivy.connector.zendesk.custom.fields.computerModel')}">
-									 	<p:ajax update="addComputerModel" listener="#{data.bean.assignCustomfields}" ></p:ajax>
+									 <p:selectOneMenu id="_#{ivy.var.get('com.axonivy.connector.zendesk.custom.fields.computerModel')}"
+									  	value="" zendeskFieldId="#{ivy.var.get('com.axonivy.connector.zendesk.custom.fields.computerModel')}">
+									 	<!-- <p:ajax update="addComputerModel" listener="#{data.bean.assignCustomfields}" ></p:ajax> -->
 					                    <f:selectItem itemLabel="Select One" itemValue=""/>
 					                    <f:selectItem itemLabel="DELL" itemValue="DELL"/>
 					                    <f:selectItem itemLabel="MAC" itemValue="MAC"/>
@@ -71,6 +72,17 @@
 					                    <f:selectItem itemLabel="ACER" itemValue="ACER"/>
 					                </p:selectOneMenu>
 				                </p:outputPanel>
+							</div>
+						</div>
+						<div class="ui-g flex-align-center">
+							<div class="ui-g-2">
+								<p:outputLabel for="@next"
+									value="Test Field" />
+							</div>
+							<div class="ui-g-10 ui-fluid">
+								<p:inputText id="_#{ivy.var.get('com.axonivy.connector.zendesk.custom.fields.test')}"
+									zendeskFieldId="#{ivy.var.get('com.axonivy.connector.zendesk.custom.fields.test')}"
+									value=""></p:inputText>
 							</div>
 						</div>
 						<div class="ui-g flex-align-center">

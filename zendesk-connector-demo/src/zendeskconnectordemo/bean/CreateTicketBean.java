@@ -7,6 +7,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 
 import com.axonivy.connector.zendesk.connector.rest.TicketDTOCustomFields;
@@ -38,5 +39,27 @@ public class CreateTicketBean {
 	
 	public List<TicketDTOCustomFields> getCustomFieldValues() {
 		return this.customFields;
+	}
+	
+	public List<TicketDTOCustomFields> integrateCustomFields() {
+		List<TicketDTOCustomFields> fields = new ArrayList<>();
+		TicketDTOCustomFields dtoCustomFields = new TicketDTOCustomFields();
+//		String test = (String) FacesContext.getCurrentInstance().getViewRoot().findComponent("form:testne").getAttributes().get("value");
+//		Ivy.log().info("test ne: " + test);
+		
+		String computerModelId = (String) FacesContext.getCurrentInstance().getViewRoot().findComponent("form:_" + Ivy.var().get("com.axonivy.connector.zendesk.custom.fields.computerModel")).getAttributes().get("zendeskFieldId");
+		String computerModelValue = (String) FacesContext.getCurrentInstance().getViewRoot().findComponent("form:_" + Ivy.var().get("com.axonivy.connector.zendesk.custom.fields.computerModel")).getAttributes().get("value");
+		dtoCustomFields.setId(new BigDecimal(computerModelId));
+		dtoCustomFields.setValue(computerModelValue);
+		fields.add(dtoCustomFields);
+		
+		String testId = (String) FacesContext.getCurrentInstance().getViewRoot().findComponent("form:_" + Ivy.var().get("com.axonivy.connector.zendesk.custom.fields.test")).getAttributes().get("zendeskFieldId");
+		String testValue = (String) FacesContext.getCurrentInstance().getViewRoot().findComponent("form:_" + Ivy.var().get("com.axonivy.connector.zendesk.custom.fields.test")).getAttributes().get("value");
+		dtoCustomFields = new TicketDTOCustomFields();
+		dtoCustomFields.setId(new BigDecimal(testId));
+		dtoCustomFields.setValue(testValue);
+		fields.add(dtoCustomFields);
+		
+		return fields;
 	}
 }

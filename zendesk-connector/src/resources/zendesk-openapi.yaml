@@ -1,0 +1,335 @@
+openapi: 3.0.1
+info:
+  title: Zendesk
+  version: 1.0.0
+servers:
+  - url: 'https://subdomain.zendesk.com/api/v2'
+paths:
+  /tickets:
+    get:
+      security:
+        - basicAuth: []
+      tags:
+        - tickets
+      summary: Get ticket list
+      responses:
+        '200':
+          description: Received List ticket
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tickets:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Ticket'
+                  next_page:
+                    type: number
+                  previous_page:
+                    type: number
+                  count:
+                    type: number
+        '422':
+          description: Server is unable to process the contained instructions
+    post:
+      security:
+        - basicAuth: []
+      tags:
+        - tickets
+      summary: Create new ticket
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ticket
+              properties:
+                ticket:
+                  $ref: '#/components/schemas/TicketDTO'
+      responses:
+        '200':
+          description: Ticket created succesfully
+          content:
+            application/json:
+              schema:
+                properties:
+                  ticket:
+                    $ref: '#/components/schemas/Ticket'
+        '422':
+          description: Server is unable to process the contained instructions
+  /tickets/{ticketId}:
+    get:
+      security:
+        - basicAuth: []
+      tags:
+        - tickets
+      summary: Get ticket details
+      parameters:
+        - name: ticketId
+          required: true
+          schema:
+            type: number
+          in: path
+      responses:
+        '200':
+          description: Ticket details succesfully
+          content:
+            application/json:
+              schema:
+                properties:
+                  ticket:
+                    $ref: '#/components/schemas/Ticket'
+        '404':
+          description: Ticket not found
+    put:
+      security:
+        - basicAuth: []
+      tags:
+        - tickets
+      summary: Update ticket
+      parameters:
+        - name: ticketId
+          required: true
+          schema:
+            type: number
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ticket
+              properties:
+                ticket:
+                  $ref: '#/components/schemas/TicketDTO'
+      responses:
+        '200':
+          description: Ticket created succesfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ticket'
+        '404':
+          description: Ticket not found
+  /uploads:
+    post:
+      parameters:
+        - in: query
+          name: filename
+          schema:
+            type: string
+          required: true
+      security:
+        - basicAuth: []
+      tags:
+        - upload
+      summary: Upload a file
+      requestBody:
+          content:
+            application/octet-stream:
+              # any media type is accepted, functionally equivalent to `*/*`
+              schema:
+                # a binary file of any type
+                type: string
+                format: binary
+      responses:
+        '200':
+          description: Upload file succesfully
+          content:
+            text/plain:
+              schema:
+                type: string
+        '201':
+          description: Upload file succesfully
+          content:
+            text/plain:
+              schema:
+                type: string            
+        '422':
+          description: Server is unable to process the contained instructions
+components:
+  schemas:
+    TicketStatusEnum:
+      type: string
+      enum:
+        - new
+        - open
+        - pending
+        - hold
+        - solved
+        - closed
+    TicketDTO:
+      type: object
+      required:
+        - recipient
+        - assignee_id
+        - comment
+        - status
+        - subject
+        - requester
+      properties:
+        recipient:
+          type: string
+          format: email
+          description: The email to send from
+        assignee_id:
+          type: number
+          description: Agent ID
+        comment:
+          type: object
+          required:
+            - html_body
+          properties:
+            public:
+              type: boolean
+              description: Indicate if the content should go publicly. Default is true
+            html_body:
+              type: string
+              description: Ticket's content
+            uploads:
+              type: array
+              items:  
+                type: string
+        status:
+          $ref: '#/components/schemas/TicketStatusEnum'
+        subject:
+          type: string
+          description: Ticket's subject
+        tags:
+          type: array
+          items:
+            type: string
+        custom_fields:
+          type: array
+          description: Custom fields to apply to the ticket
+          items:
+            type: object
+            required:
+              - id
+              - value
+            properties:
+              id:
+                type: number
+              value:
+                type:
+                  string
+        requester:
+          type: object
+          description: The target details to send to
+          required:
+            - name
+            - email
+          properties:
+            name:
+              type: string
+            email:
+              type: string
+              format: email
+    Ticket:
+      allOf:
+        - $ref: '#/components/schemas/TicketDTO'
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              type: number
+    Application:
+      type: object
+      required:
+        - installation
+      properties:
+        installation:
+          type: object
+          required:
+            - settings
+          properties:
+            settings:
+              type: array
+              items:
+                type: object
+                required:
+                  - key
+                  - value
+                properties:
+                  key:
+                    type: string
+                  value:
+                    type: string
+    GroupedEmails:
+      type: object
+      additionalProperties:
+        type: string
+      example:
+        Compliance: "compliance@domain.com, cx@domain.com"
+    Group:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+    User:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: number
+    Macro:
+      type: object
+      required:
+        - id
+        - title
+        - actions
+      properties:
+        id:
+          type: number
+        title:
+          type: string
+        actions:
+          type: array
+          items:
+            type: object
+            required:
+              - field
+              - value
+            properties:
+              field:
+                type: string
+              value:
+                type: string
+    UploadDTO:
+      type: object
+      required:
+        - fileName
+        - content
+      properties:
+        fileName:
+          type: string  
+        content:
+          type: string
+          format: binary
+    Upload:
+      type: object
+      required:
+        - token
+      properties:
+        token:
+          type: string      
+  securitySchemes:
+    basicAuth:     # <-- arbitrary name for the security scheme
+      type: http
+      scheme: basic
+security:
+  - basicAuth: []

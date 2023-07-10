@@ -8,15 +8,17 @@
   "elements" : [ {
       "id" : "f0",
       "type" : "CallSubStart",
-      "name" : "call(UploadDTO)",
+      "name" : "call(String,File)",
       "config" : {
         "callSignature" : "call",
         "input" : {
           "params" : [
-            { "name" : "uploadDTO", "type" : "com.axonivy.connector.zendesk.connector.rest.UploadDTO" }
+            { "name" : "fileName", "type" : "String" },
+            { "name" : "file", "type" : "java.io.File" }
           ],
           "map" : {
-            "out.uploadDTO" : "param.uploadDTO"
+            "out.file" : "param.file",
+            "out.fileName" : "param.fileName"
           }
         },
         "result" : {
@@ -36,7 +38,7 @@
       "id" : "f1",
       "type" : "CallSubEnd",
       "visual" : {
-        "at" : { "x" : 512, "y" : 64 }
+        "at" : { "x" : 544, "y" : 64 }
       }
     }, {
       "id" : "f3",
@@ -49,16 +51,15 @@
         "clientId" : "511cd2cb-fb05-4df7-98a8-e8f0fc669317",
         "method" : "POST",
         "queryParams" : {
-          "filename" : "in.uploadDTO.fileName"
+          "filename" : "in.uploadFileDTO.fileName"
         },
         "statusErrorCode" : "ivy:error:rest:client",
         "bodyObjectType" : "[B",
         "bodyInputType" : "RAW",
         "responseCode" : [
           "import com.axonivy.connector.zendesk.ZendeskUtils;",
-          "ivy.log.info(\"response: \" + in.response);",
-          "in.upload = ZendeskUtils.convertToUpload(in.response);",
-          "ivy.log.info(\"upload token: \" + in.upload.token);"
+          "",
+          "in.upload = ZendeskUtils.convertToUpload(in.response);"
         ],
         "bodyForm" : {
           "content" : "in.uploadDTO.content"
@@ -72,23 +73,24 @@
         "bodyMediaType" : "application/octet-stream"
       },
       "visual" : {
-        "at" : { "x" : 384, "y" : 64 }
+        "at" : { "x" : 424, "y" : 64 }
       },
       "connect" : { "id" : "f2", "to" : "f1" }
     }, {
       "id" : "f5",
       "type" : "Script",
+      "name" : "Prepare DTO",
       "config" : {
         "output" : {
           "code" : [
             "import org.apache.commons.io.FileUtils;",
-            "in.uploadFileDTO.fileName = in.uploadDTO.fileName;",
-            "in.uploadFileDTO.content = FileUtils.readFileToByteArray(in.uploadDTO.content);"
+            "in.uploadFileDTO.fileName = in.fileName;",
+            "in.uploadFileDTO.content = FileUtils.readFileToByteArray(in.file);"
           ]
         }
       },
       "visual" : {
-        "at" : { "x" : 224, "y" : 64 }
+        "at" : { "x" : 248, "y" : 64 }
       },
       "connect" : { "id" : "f4", "to" : "f3" }
     } ]

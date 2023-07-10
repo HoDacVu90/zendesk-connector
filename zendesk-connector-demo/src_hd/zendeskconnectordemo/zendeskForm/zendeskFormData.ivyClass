@@ -14,3 +14,7 @@ uploadDTO com.axonivy.connector.zendesk.connector.rest.UploadDTO #field
 uploadDTO PERSISTENT #fieldModifier
 token String #field
 token PERSISTENT #fieldModifier
+file java.io.File #field
+file PERSISTENT #fieldModifier
+fileName String #field
+fileName PERSISTENT #fieldModifier

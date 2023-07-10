@@ -4,3 +4,5 @@ uploadDTO com.axonivy.connector.zendesk.connector.rest.UploadDTO #field
 upload com.axonivy.connector.zendesk.connector.rest.Upload #field
 uploadFileDTO com.axonivy.connector.zendesk.dto.UploadFileDTO #field
 response String #field
+file java.io.File #field
+fileName String #field
